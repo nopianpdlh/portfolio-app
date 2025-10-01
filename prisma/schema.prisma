@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User model untuk autentikasi admin
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  bio       String?  @db.Text
+  photoUrl  String?
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects    Project[]
+  skills      Skill[]
+  experiences Experience[]
+  blogPosts   BlogPost[]
+  contacts    Contact[]
+}
+
+// Project model untuk portfolio (enhanced based on blueprint)
+model Project {
+  id                   String    @id @default(uuid())
+  title                String
+  description          String    @db.Text
+  techStack            String[]  // e.g., ["NextJS", "TailwindCSS"]
+  programmingLanguages String[]  // e.g., ["JavaScript", "TypeScript"]
+  category             String?   // e.g., "Web App", "Mobile App"
+  images               String[]  // URLs from Supabase storage (multiple images)
+  liveUrl              String?
+  repoUrl              String?
+  challenges           String?   @db.Text
+  solutions            String?   @db.Text
+  metrics              String?   // e.g., "40% faster load"
+  dateCompleted        DateTime?
+  isFeatured           Boolean   @default(false)
+  isPublished          Boolean   @default(false)
+  slug                 String    @unique // For detail page routing
+  order                Int       @default(0)
+  archived             Boolean   @default(false) // For soft delete
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+// Skill model untuk skills matrix
+model Skill {
+  id        String   @id @default(uuid())
+  name      String   // e.g., "NextJS"
+  category  String?  // e.g., "Frontend", "Backend", "Languages"
+  level     String?  // e.g., "Advanced", "Intermediate", "Beginner"
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+// Experience model untuk work experience/timeline
+model Experience {
+  id          String    @id @default(uuid())
+  title       String    // e.g., "Software Engineer"
+  company     String?
+  description String?   @db.Text
+  startDate   DateTime?
+  endDate     DateTime?
+  isCurrent   Boolean   @default(false)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+// BlogPost model untuk blog section (optional)
+model BlogPost {
+  id              String    @id @default(uuid())
+  title           String
+  content         String    @db.Text // Markdown or HTML
+  excerpt         String?   @db.Text
+  tags            String[]
+  coverImage      String?
+  publishDate     DateTime?
+  isPublished     Boolean   @default(false)
+  slug            String    @unique
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+// Contact model untuk contact form submissions
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  message   String   @db.Text
+  replied   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
+}
+
+// Settings model untuk site-wide settings
+model Settings {
+  id          String   @id @default(uuid())
+  siteName    String   @default("Portfolio")
+  siteTagline String?
+  siteDescription String? @db.Text
+  resumeUrl   String?  // Downloadable resume link
+  email       String?
+  phone       String?
+  address     String?
+  github      String?
+  linkedin    String?
+  twitter     String?
+  instagram   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
