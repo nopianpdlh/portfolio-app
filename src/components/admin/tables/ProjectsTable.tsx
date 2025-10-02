@@ -44,9 +44,12 @@ interface Project {
   techStack: string[]
   programmingLanguages: string[]
   category: string | null
-  demoUrl: string | null
-  githubUrl: string | null
+  liveUrl: string | null
+  repoUrl: string | null
   images: string[]
+  challenges: string | null
+  solutions: string | null
+  metrics: string | null
   dateCompleted: Date | null
   isFeatured: boolean
   isPublished: boolean
