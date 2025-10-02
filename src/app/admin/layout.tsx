@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/auth"
 import AdminHeader from "@/components/admin/AdminHeader"
+import { Toaster } from "@/components/ui/sonner"
 
 export default async function AdminLayout({
   children,
@@ -15,6 +16,7 @@ export default async function AdminLayout({
       <main className="container mx-auto py-6 px-4">
         {children}
       </main>
+      <Toaster richColors position="top-center" />
     </div>
   )
 }
