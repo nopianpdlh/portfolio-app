@@ -20,6 +20,7 @@ import { createProjectSchema } from "@/lib/validations/project"
 import { createProject, updateProject } from "@/lib/actions/projects"
 import TagsInput from "@/components/admin/TagsInput"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 type ProjectFormData = z.infer<typeof createProjectSchema>
 
@@ -100,15 +101,17 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
 
       if (initialData?.id) {
         await updateProject(initialData.id, formData)
+        toast.success("Project updated successfully!")
       } else {
         await createProject(formData)
+        toast.success("Project created successfully!")
       }
 
       router.push("/admin/projects")
       router.refresh()
     } catch (error) {
       console.error(error)
-      alert("Failed to save project")
+      toast.error("Failed to save project. Please try again.")
     } finally {
       setIsSubmitting(false)
     }

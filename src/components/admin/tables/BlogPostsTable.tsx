@@ -22,6 +22,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -37,42 +44,31 @@ import {
   Edit,
   Trash2,
   Eye,
-  Star,
-  Archive,
   CheckCircle,
   XCircle,
   Search,
 } from "lucide-react"
-import { deleteProject, toggleFeaturedProject, togglePublishedProject, toggleArchiveProject } from "@/lib/actions/projects"
+import { deleteBlogPost, togglePublishBlogPost } from "@/lib/actions/blog"
 import { formatDate } from "@/lib/utils"
 import { toast } from "sonner"
 
-interface Project {
+interface BlogPost {
   id: string
   title: string
   slug: string
-  description: string
-  techStack: string[]
-  programmingLanguages: string[]
-  category: string | null
-  liveUrl: string | null
-  repoUrl: string | null
-  images: string[]
-  challenges: string | null
-  solutions: string | null
-  metrics: string | null
-  dateCompleted: Date | null
-  isFeatured: boolean
+  excerpt: string | null
   isPublished: boolean
-  archived: boolean
-  order: number
-  userId: string
+  publishDate: Date | null
   createdAt: Date
-  updatedAt: Date
+  tags: string[]
+  user: {
+    name: string | null
+    email: string
+  }
 }
 
-interface ProjectsTableProps {
-  projects: Project[]
+interface BlogPostsTableProps {
+  posts: BlogPost[]
   pagination: {
     page: number
     limit: number
@@ -81,12 +77,13 @@ interface ProjectsTableProps {
   }
 }
 
-export default function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
+export default function BlogPostsTable({ posts, pagination }: BlogPostsTableProps) {
   const router = useRouter()
   const [search, setSearch] = useState("")
+  const [status, setStatus] = useState("all")
   const [loading, setLoading] = useState<string | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [projectToDelete, setProjectToDelete] = useState<{ id: string; title: string } | null>(null)
+  const [postToDelete, setPostToDelete] = useState<{ id: string; title: string } | null>(null)
 
   const handleSearch = (value: string) => {
     setSearch(value)
@@ -97,69 +94,53 @@ export default function ProjectsTable({ projects, pagination }: ProjectsTablePro
       params.delete("search")
     }
     params.set("page", "1")
-    router.push(`/admin/projects?${params.toString()}`)
+    router.push(`/admin/blog?${params.toString()}`)
+  }
+
+  const handleStatusFilter = (value: string) => {
+    setStatus(value)
+    const params = new URLSearchParams(window.location.search)
+    if (value !== "all") {
+      params.set("status", value)
+    } else {
+      params.delete("status")
+    }
+    params.set("page", "1")
+    router.push(`/admin/blog?${params.toString()}`)
   }
 
   const handleDeleteClick = (id: string, title: string) => {
-    setProjectToDelete({ id, title })
+    setPostToDelete({ id, title })
     setDeleteDialogOpen(true)
   }
 
   const handleDeleteConfirm = async () => {
-    if (!projectToDelete) return
+    if (!postToDelete) return
 
-    setLoading(projectToDelete.id)
+    setLoading(postToDelete.id)
     try {
-      await deleteProject(projectToDelete.id)
-      toast.success("Project deleted successfully!")
+      await deleteBlogPost(postToDelete.id)
+      toast.success("Post deleted successfully!")
       router.refresh()
     } catch (error) {
       console.error(error)
-      toast.error("Failed to delete project. Please try again.")
+      toast.error("Failed to delete post. Please try again.")
     } finally {
       setLoading(null)
       setDeleteDialogOpen(false)
-      setProjectToDelete(null)
+      setPostToDelete(null)
     }
   }
 
-  const handleToggleFeatured = async (id: string) => {
+  const handleTogglePublish = async (id: string) => {
     setLoading(id)
     try {
-      await toggleFeaturedProject(id)
-      toast.success("Featured status updated!")
-      router.refresh()
-    } catch (error) {
-      console.error(error)
-      toast.error("Failed to update project. Please try again.")
-    } finally {
-      setLoading(null)
-    }
-  }
-
-  const handleTogglePublished = async (id: string) => {
-    setLoading(id)
-    try {
-      await togglePublishedProject(id)
+      await togglePublishBlogPost(id)
       toast.success("Publish status updated!")
       router.refresh()
     } catch (error) {
       console.error(error)
-      toast.error("Failed to update project. Please try again.")
-    } finally {
-      setLoading(null)
-    }
-  }
-
-  const handleToggleArchive = async (id: string) => {
-    setLoading(id)
-    try {
-      await toggleArchiveProject(id)
-      toast.success("Archive status updated!")
-      router.refresh()
-    } catch (error) {
-      console.error(error)
-      toast.error("Failed to update project. Please try again.")
+      toast.error("Failed to update post. Please try again.")
     } finally {
       setLoading(null)
     }
@@ -167,17 +148,27 @@ export default function ProjectsTable({ projects, pagination }: ProjectsTablePro
 
   return (
     <div className="space-y-4">
-      {/* Search */}
-      <div className="flex items-center space-x-2">
+      {/* Filters */}
+      <div className="flex items-center gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
-            placeholder="Search projects..."
+            placeholder="Search posts..."
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             className="pl-10"
           />
         </div>
+        <Select value={status} onValueChange={handleStatusFilter}>
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Posts</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+            <SelectItem value="draft">Drafts</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}
@@ -186,113 +177,101 @@ export default function ProjectsTable({ projects, pagination }: ProjectsTablePro
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead>Category</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Featured</TableHead>
+              <TableHead>Tags</TableHead>
+              <TableHead>Author</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {projects.length === 0 ? (
+            {posts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-gray-500 py-8">
-                  No projects found. Create your first project!
+                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  No blog posts found. Create your first post!
                 </TableCell>
               </TableRow>
             ) : (
-              projects.map((project) => (
-                <TableRow key={project.id}>
-                  <TableCell className="font-medium">
+              posts.map((post) => (
+                <TableRow key={post.id}>
+                  <TableCell>
                     <div>
-                      <div className="flex items-center space-x-2">
-                        <span>{project.title}</span>
-                        {project.archived && (
-                          <Badge variant="secondary" className="text-xs">
-                            Archived
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {project.techStack.slice(0, 3).map((tech, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">
-                            {tech}
-                          </Badge>
-                        ))}
-                        {project.techStack.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{project.techStack.length - 3}
-                          </Badge>
-                        )}
-                      </div>
+                      <Link
+                        href={`/admin/blog/${post.id}/edit`}
+                        className="font-medium hover:text-blue-600"
+                      >
+                        {post.title}
+                      </Link>
+                      {post.excerpt && (
+                        <p className="text-sm text-gray-500 line-clamp-1">{post.excerpt}</p>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
-                    {project.category && (
-                      <Badge variant="secondary">{project.category}</Badge>
+                    {post.isPublished ? (
+                      <Badge className="bg-green-500">Published</Badge>
+                    ) : (
+                      <Badge variant="secondary">Draft</Badge>
                     )}
                   </TableCell>
                   <TableCell>
-                    {project.isPublished ? (
-                      <Badge className="bg-green-500 hover:bg-green-600">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Published
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary">
-                        <XCircle className="w-3 h-3 mr-1" />
-                        Draft
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {project.isFeatured ? (
-                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                    ) : (
-                      <Star className="w-4 h-4 text-gray-300" />
-                    )}
+                    <div className="flex gap-1 flex-wrap">
+                      {post.tags.slice(0, 2).map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {post.tags.length > 2 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{post.tags.length - 2}
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-sm text-gray-600">
-                    {formatDate(project.createdAt)}
+                    {post.user.name || post.user.email}
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-600">
+                    {formatDate(post.publishDate || post.createdAt)}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" disabled={loading === project.id}>
+                        <Button variant="ghost" size="sm" disabled={loading === post.id}>
                           <MoreHorizontal className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                          <Link href={`/admin/projects/${project.id}`}>
+                          <Link href={`/blog/${post.slug}`} target="_blank">
                             <Eye className="w-4 h-4 mr-2" />
-                            View
+                            View Post
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href={`/admin/projects/${project.id}/edit`}>
+                          <Link href={`/admin/blog/${post.id}/edit`}>
                             <Edit className="w-4 h-4 mr-2" />
                             Edit
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleToggleFeatured(project.id)}>
-                          <Star className="w-4 h-4 mr-2" />
-                          {project.isFeatured ? "Unfeature" : "Feature"}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleTogglePublished(project.id)}>
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          {project.isPublished ? "Unpublish" : "Publish"}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleToggleArchive(project.id)}>
-                          <Archive className="w-4 h-4 mr-2" />
-                          {project.archived ? "Unarchive" : "Archive"}
+                        <DropdownMenuItem onClick={() => handleTogglePublish(post.id)}>
+                          {post.isPublished ? (
+                            <>
+                              <XCircle className="w-4 h-4 mr-2" />
+                              Unpublish
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              Publish
+                            </>
+                          )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          onClick={() => handleDeleteClick(project.id, project.title)}
+                          onClick={() => handleDeleteClick(post.id, post.title)}
                           className="text-red-600"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
@@ -314,7 +293,7 @@ export default function ProjectsTable({ projects, pagination }: ProjectsTablePro
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the project <strong>&quot;{projectToDelete?.title}&quot;</strong>.
+              This will permanently delete the blog post <strong>&quot;{postToDelete?.title}&quot;</strong>.
               This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -336,14 +315,14 @@ export default function ProjectsTable({ projects, pagination }: ProjectsTablePro
           <div className="text-sm text-gray-600">
             Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
             {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{" "}
-            projects
+            posts
           </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               size="sm"
               disabled={pagination.page === 1}
-              onClick={() => router.push(`/admin/projects?page=${pagination.page - 1}`)}
+              onClick={() => router.push(`/admin/blog?page=${pagination.page - 1}`)}
             >
               Previous
             </Button>
@@ -354,7 +333,7 @@ export default function ProjectsTable({ projects, pagination }: ProjectsTablePro
               variant="outline"
               size="sm"
               disabled={pagination.page === pagination.totalPages}
-              onClick={() => router.push(`/admin/projects?page=${pagination.page + 1}`)}
+              onClick={() => router.push(`/admin/blog?page=${pagination.page + 1}`)}
             >
               Next
             </Button>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
   DndContext,
@@ -19,6 +19,7 @@ import {
 } from "@dnd-kit/sortable"
 import ExperienceCard from "./ExperienceCard"
 import { reorderExperiences } from "@/lib/actions/experiences"
+import { toast } from "sonner"
 
 interface Experience {
   id: string
@@ -38,6 +39,12 @@ interface ExperiencesListProps {
 export default function ExperiencesList({ experiences: initialExperiences }: ExperiencesListProps) {
   const router = useRouter()
   const [experiences, setExperiences] = useState(initialExperiences)
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Fix hydration mismatch by only rendering DnD on client
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -68,13 +75,26 @@ export default function ExperiencesList({ experiences: initialExperiences }: Exp
             order: index,
           }))
         )
+        toast.success("Experiences reordered successfully!")
         router.refresh()
       } catch (error) {
         console.error(error)
+        toast.error("Failed to reorder experiences. Please try again.")
         // Revert on error
         setExperiences(initialExperiences)
       }
     }
+  }
+
+  // Render static list during SSR to prevent hydration mismatch
+  if (!isMounted) {
+    return (
+      <div className="space-y-4">
+        {experiences.map((experience) => (
+          <ExperienceCard key={experience.id} experience={experience} />
+        ))}
+      </div>
+    )
   }
 
   return (

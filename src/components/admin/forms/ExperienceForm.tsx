@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { createExperienceSchema } from "@/lib/validations/experience"
 import { createExperience, updateExperience } from "@/lib/actions/experiences"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 type ExperienceFormData = z.infer<typeof createExperienceSchema>
 
@@ -36,7 +37,7 @@ export default function ExperienceForm({ initialData }: ExperienceFormProps) {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<ExperienceFormData>({
+  } = useForm<any>({
     resolver: zodResolver(createExperienceSchema),
     defaultValues: initialData
       ? {
@@ -52,6 +53,11 @@ export default function ExperienceForm({ initialData }: ExperienceFormProps) {
           isCurrent: initialData.isCurrent,
         }
       : {
+          title: "",
+          company: "",
+          description: "",
+          startDate: "",
+          endDate: "",
           isCurrent: false,
         },
   })
@@ -67,15 +73,17 @@ export default function ExperienceForm({ initialData }: ExperienceFormProps) {
 
       if (initialData?.id) {
         await updateExperience(initialData.id, formData)
+        toast.success("Experience updated successfully!")
       } else {
         await createExperience(formData)
+        toast.success("Experience created successfully!")
       }
 
       router.push("/admin/experiences")
       router.refresh()
     } catch (error) {
       console.error(error)
-      alert("Failed to save experience")
+      toast.error("Failed to save experience. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -89,14 +97,14 @@ export default function ExperienceForm({ initialData }: ExperienceFormProps) {
           Job Title <span className="text-red-500">*</span>
         </Label>
         <Input id="title" {...register("title")} placeholder="e.g., Software Engineer" />
-        {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
+        {errors.title && <p className="text-sm text-red-500">{String(errors.title.message)}</p>}
       </div>
 
       {/* Company */}
       <div className="space-y-2">
         <Label htmlFor="company">Company</Label>
         <Input id="company" {...register("company")} placeholder="e.g., Tech Company Inc." />
-        {errors.company && <p className="text-sm text-red-500">{errors.company.message}</p>}
+        {errors.company && <p className="text-sm text-red-500">{String(errors.company.message)}</p>}
       </div>
 
       {/* Description */}
@@ -109,7 +117,7 @@ export default function ExperienceForm({ initialData }: ExperienceFormProps) {
           rows={6}
         />
         {errors.description && (
-          <p className="text-sm text-red-500">{errors.description.message}</p>
+          <p className="text-sm text-red-500">{String(errors.description.message)}</p>
         )}
       </div>
 
@@ -118,7 +126,7 @@ export default function ExperienceForm({ initialData }: ExperienceFormProps) {
         <div className="space-y-2">
           <Label htmlFor="startDate">Start Date</Label>
           <Input id="startDate" {...register("startDate")} type="date" />
-          {errors.startDate && <p className="text-sm text-red-500">{errors.startDate.message}</p>}
+          {errors.startDate && <p className="text-sm text-red-500">{String(errors.startDate.message)}</p>}
         </div>
 
         <div className="space-y-2">
@@ -130,7 +138,7 @@ export default function ExperienceForm({ initialData }: ExperienceFormProps) {
             disabled={isCurrent}
             className={isCurrent ? "bg-gray-100 cursor-not-allowed" : ""}
           />
-          {errors.endDate && <p className="text-sm text-red-500">{errors.endDate.message}</p>}
+          {errors.endDate && <p className="text-sm text-red-500">{String(errors.endDate.message)}</p>}
         </div>
       </div>
 

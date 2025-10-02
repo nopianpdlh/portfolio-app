@@ -7,9 +7,20 @@ import { CSS } from "@dnd-kit/utilities"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { GripVertical, Edit, Trash2, Briefcase, Calendar } from "lucide-react"
 import { deleteExperience } from "@/lib/actions/experiences"
 import { formatDate } from "@/lib/utils"
+import { toast } from "sonner"
 
 interface Experience {
   id: string
@@ -29,6 +40,7 @@ interface ExperienceCardProps {
 export default function ExperienceCard({ experience }: ExperienceCardProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: experience.id,
@@ -40,17 +52,18 @@ export default function ExperienceCard({ experience }: ExperienceCardProps) {
     opacity: isDragging ? 0.5 : 1,
   }
 
-  const handleDelete = async () => {
-    if (!confirm(`Delete "${experience.title}" from ${experience.company}?`)) return
-
+  const handleDeleteConfirm = async () => {
     setIsDeleting(true)
     try {
       await deleteExperience(experience.id)
+      toast.success("Experience deleted successfully!")
       router.refresh()
     } catch (error) {
       console.error(error)
-      alert("Failed to delete experience")
+      toast.error("Failed to delete experience. Please try again.")
       setIsDeleting(false)
+    } finally {
+      setDeleteDialogOpen(false)
     }
   }
 
@@ -106,7 +119,7 @@ export default function ExperienceCard({ experience }: ExperienceCardProps) {
             <Button
               size="sm"
               variant="ghost"
-              onClick={handleDelete}
+              onClick={() => setDeleteDialogOpen(true)}
               disabled={isDeleting}
               className="text-red-600 hover:text-red-700 hover:bg-red-50"
             >
@@ -126,6 +139,28 @@ export default function ExperienceCard({ experience }: ExperienceCardProps) {
           </p>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Experience</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>&quot;{experience.title}&quot;</strong> at <strong>{experience.company}</strong>?
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

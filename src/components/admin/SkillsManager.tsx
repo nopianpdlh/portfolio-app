@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
   DndContext,
@@ -30,6 +30,7 @@ import {
 import { Plus, Loader2 } from "lucide-react"
 import SkillCard from "./SkillCard"
 import { createSkill, reorderSkills } from "@/lib/actions/skills"
+import { toast } from "sonner"
 
 interface Skill {
   id: string
@@ -52,11 +53,17 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All")
   const [isAdding, setIsAdding] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const [newSkill, setNewSkill] = useState({
     name: "",
     category: "Frontend",
     level: "Intermediate",
   })
+
+  // Fix hydration mismatch by only rendering DnD on client
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -105,9 +112,11 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
             order: index,
           })),
         })
+        toast.success("Skills reordered successfully!")
         router.refresh()
       } catch (error) {
         console.error(error)
+        toast.error("Failed to reorder skills. Please try again.")
         // Revert on error
         setSkills(initialSkills)
       }
@@ -122,10 +131,11 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
       await createSkill(newSkill)
       setNewSkill({ name: "", category: "Frontend", level: "Intermediate" })
       setIsAdding(false)
+      toast.success("Skill added successfully!")
       router.refresh()
     } catch (error) {
       console.error(error)
-      alert("Failed to add skill")
+      toast.error("Failed to add skill. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -224,6 +234,13 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
         {filteredSkills.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <p>No skills found. Add your first skill!</p>
+          </div>
+        ) : !isMounted ? (
+          // Render static list during SSR to prevent hydration mismatch
+          <div className="space-y-2">
+            {filteredSkills.map((skill) => (
+              <SkillCard key={skill.id} skill={skill} categories={CATEGORIES} levels={LEVELS} />
+            ))}
           </div>
         ) : (
           <DndContext

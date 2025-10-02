@@ -14,8 +14,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { GripVertical, Edit, Trash2, Save, X } from "lucide-react"
 import { updateSkill, deleteSkill } from "@/lib/actions/skills"
+import { toast } from "sonner"
 
 interface Skill {
   id: string
@@ -35,6 +46,7 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editData, setEditData] = useState({
     name: skill.name,
     category: skill.category || "Other",
@@ -55,24 +67,26 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
     try {
       await updateSkill(skill.id, editData)
       setIsEditing(false)
+      toast.success("Skill updated successfully!")
       router.refresh()
     } catch (error) {
       console.error(error)
-      alert("Failed to update skill")
+      toast.error("Failed to update skill. Please try again.")
     }
   }
 
-  const handleDelete = async () => {
-    if (!confirm(`Delete "${skill.name}"?`)) return
-
+  const handleDeleteConfirm = async () => {
     setIsDeleting(true)
     try {
       await deleteSkill(skill.id)
+      toast.success("Skill deleted successfully!")
       router.refresh()
     } catch (error) {
       console.error(error)
-      alert("Failed to delete skill")
+      toast.error("Failed to delete skill. Please try again.")
       setIsDeleting(false)
+    } finally {
+      setDeleteDialogOpen(false)
     }
   }
 
@@ -196,7 +210,7 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
             <Button
               size="sm"
               variant="ghost"
-              onClick={handleDelete}
+              onClick={() => setDeleteDialogOpen(true)}
               disabled={isDeleting}
               className="text-red-600 hover:text-red-700 hover:bg-red-50"
             >
@@ -205,6 +219,28 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
           </>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Skill</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>&quot;{skill.name}&quot;</strong>?
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
