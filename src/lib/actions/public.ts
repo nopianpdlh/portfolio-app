@@ -242,6 +242,69 @@ export async function getSiteSettings() {
   }
 }
 
+// ===== Certificates =====
+export async function getPublishedCertificates() {
+  try {
+    const certificates = await prisma.certificate.findMany({
+      where: {
+        isPublished: true,
+      },
+      orderBy: {
+        issueDate: "desc",
+      },
+      select: {
+        id: true,
+        name: true,
+        issuer: true,
+        issueDate: true,
+        expiryDate: true,
+        credentialId: true,
+        credentialUrl: true,
+        description: true,
+        imageUrl: true,
+        order: true,
+      },
+    })
+
+    return { success: true, data: certificates }
+  } catch (error) {
+    console.error("Error fetching certificates:", error)
+    return { success: false, error: "Failed to fetch certificates" }
+  }
+}
+
+// ===== Education =====
+export async function getPublishedEducations() {
+  try {
+    const educations = await prisma.education.findMany({
+      where: {
+        isPublished: true,
+      },
+      orderBy: {
+        startDate: "desc",
+      },
+      select: {
+        id: true,
+        institution: true,
+        degree: true,
+        field: true,
+        startDate: true,
+        endDate: true,
+        isCurrent: true,
+        grade: true,
+        description: true,
+        location: true,
+        order: true,
+      },
+    })
+
+    return { success: true, data: educations }
+  } catch (error) {
+    console.error("Error fetching educations:", error)
+    return { success: false, error: "Failed to fetch educations" }
+  }
+}
+
 // ===== Contact Form Submission =====
 export async function submitContactForm(data: {
   name: string

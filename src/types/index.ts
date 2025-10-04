@@ -61,6 +61,41 @@ export type Experience = {
   userId: string
 }
 
+export type Certificate = {
+  id: string
+  name: string
+  issuer: string
+  issueDate?: Date | null
+  expiryDate?: Date | null
+  credentialId?: string | null
+  credentialUrl?: string | null
+  description?: string | null
+  imageUrl?: string | null
+  isPublished: boolean
+  order: number
+  createdAt: Date
+  updatedAt: Date
+  userId: string
+}
+
+export type Education = {
+  id: string
+  institution: string
+  degree: string
+  field?: string | null
+  startDate?: Date | null
+  endDate?: Date | null
+  isCurrent: boolean
+  grade?: string | null
+  description?: string | null
+  location?: string | null
+  isPublished: boolean
+  order: number
+  createdAt: Date
+  updatedAt: Date
+  userId: string
+}
+
 export type BlogPost = {
   id: string
   title: string
@@ -114,5 +149,9 @@ export type ContactFormData = Pick<Contact, 'name' | 'email' | 'subject' | 'mess
 export type SkillFormData = Omit<Skill, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
 
 export type ExperienceFormData = Omit<Experience, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
+
+export type CertificateFormData = Omit<Certificate, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
+
+export type EducationFormData = Omit<Education, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
 
 export type BlogPostFormData = Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt' | 'userId'>

@@ -66,6 +66,18 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
               Experiences
             </Link>
             <Link
+              href="/admin/certificates"
+              className="text-sm text-gray-600 hover:text-gray-900 transition"
+            >
+              Certificates
+            </Link>
+            <Link
+              href="/admin/educations"
+              className="text-sm text-gray-600 hover:text-gray-900 transition"
+            >
+              Education
+            </Link>
+            <Link
               href="/admin/blog"
               className="text-sm text-gray-600 hover:text-gray-900 transition"
             >
