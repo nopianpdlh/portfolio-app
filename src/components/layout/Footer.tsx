@@ -167,9 +167,7 @@ export default function Footer({ settings }: FooterProps) {
             © {currentYear} Portfolio. All rights reserved.
           </p>
           
-          <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="w-4 h-4 text-red-500 fill-current" /> using Next.js
-          </p>
+         
         </div>
       </div>
     </footer>
