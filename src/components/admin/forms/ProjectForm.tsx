@@ -19,6 +19,7 @@ import {
 import { createProjectSchema } from "@/lib/validations/project"
 import { createProject, updateProject } from "@/lib/actions/projects"
 import TagsInput from "@/components/admin/TagsInput"
+import ImageUpload from "@/components/admin/ImageUpload"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -59,6 +60,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
   const [programmingLanguages, setProgrammingLanguages] = useState<string[]>(
     initialData?.programmingLanguages || []
   )
+  const [images, setImages] = useState<string[]>(initialData?.images || [])
 
   const {
     register,
@@ -97,6 +99,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         ...data,
         techStack,
         programmingLanguages,
+        images,
       }
 
       if (initialData?.id) {
@@ -196,6 +199,23 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
         {errors.programmingLanguages && (
           <p className="text-sm text-red-500">{errors.programmingLanguages.message}</p>
         )}
+      </div>
+
+      {/* Project Images */}
+      <div className="space-y-2">
+        <Label>
+          Project Images <span className="text-red-500">*</span>
+        </Label>
+        <ImageUpload
+          images={images}
+          onChange={(newImages) => {
+            setImages(newImages)
+            setValue("images", newImages)
+          }}
+          maxImages={5}
+          folder="projects"
+        />
+        {errors.images && <p className="text-sm text-red-500">{errors.images.message}</p>}
       </div>
 
       {/* URLs */}
