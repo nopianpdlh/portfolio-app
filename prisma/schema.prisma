@@ -179,6 +179,21 @@ model Settings {
   linkedin    String?
   twitter     String?
   instagram   String?
+  
+  // Status & Quick Stats Fields
+  availabilityStatus     String  @default("available") // "available", "busy", "unavailable"
+  currentActivity        String  @default("Building cool stuff")
+  openToOpportunities    Boolean @default(true)
+  yearsOfExperience      Int?    // Optional manual override, otherwise auto-calculated
+  
+  // Custom Statistics (Optional)
+  customStatLabel1       String?
+  customStatValue1       String?
+  customStatLabel2       String?
+  customStatValue2       String?
+  customStatLabel3       String?
+  customStatValue3       String?
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

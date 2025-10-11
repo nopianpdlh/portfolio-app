@@ -1,6 +1,8 @@
 import { getSiteSettings, getPublishedSkills, getPublishedExperiences, getPublishedCertificates, getPublishedEducations } from "@/lib/actions/public"
+import { getPublicStatusStats } from "@/lib/actions/settings"
 import PublicLayout from "@/components/layout/PublicLayout"
 import AboutHero from "@/components/about/AboutHero"
+import StatusQuickStats from "@/components/about/StatusQuickStats"
 import SkillsMatrix from "@/components/about/SkillsMatrix"
 import ExperienceTimeline from "@/components/about/ExperienceTimeline"
 import CertificatesSection from "@/components/about/CertificatesSection"
@@ -17,12 +19,13 @@ export const metadata = generateSEO({
 })
 
 export default async function AboutPage() {
-  const [settingsResult, skillsResult, experiencesResult, certificatesResult, educationsResult] = await Promise.all([
+  const [settingsResult, skillsResult, experiencesResult, certificatesResult, educationsResult, statusStats] = await Promise.all([
     getSiteSettings(),
     getPublishedSkills(),
     getPublishedExperiences(),
     getPublishedCertificates(),
     getPublishedEducations(),
+    getPublicStatusStats(),
   ])
 
   const settings = settingsResult.success ? settingsResult.data : null
@@ -35,6 +38,12 @@ export default async function AboutPage() {
     <PublicLayout>
       <main className="min-h-screen">
         <AboutHero settings={settings} />
+        <StatusQuickStats
+          availabilityStatus={statusStats.availabilityStatus}
+          currentActivity={statusStats.currentActivity}
+          openToOpportunities={statusStats.openToOpportunities}
+          stats={statusStats.stats}
+        />
         <SkillsMatrix skills={skills} />
         <ExperienceTimeline experiences={experiences} />
         <CertificatesSection certificates={certificates} />
