@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { getExperienceById } from "@/lib/actions/experiences"
 
-export default async function EditExperiencePage({ params }: { params: { id: string } }) {
-  const experience = await getExperienceById(params.id)
+export default async function EditExperiencePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const experience = await getExperienceById(id)
 
   if (!experience) {
     notFound()

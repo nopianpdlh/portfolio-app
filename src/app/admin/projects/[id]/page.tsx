@@ -7,8 +7,9 @@ import { ArrowLeft, Edit, ExternalLink, Github, Calendar, Star } from "lucide-re
 import { getProjectById } from "@/lib/actions/projects"
 import { formatDate } from "@/lib/utils"
 
-export default async function ProjectDetailPage({ params }: { params: { id: string } }) {
-  const project = await getProjectById(params.id)
+export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const project = await getProjectById(id)
 
   if (!project) {
     notFound()
