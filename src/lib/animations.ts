@@ -13,7 +13,7 @@ export const slideUp = {
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
+    transition: { duration: 0.6, ease: [0.6, 0.01, -0.05, 0.95] }
   }
 }
 
@@ -71,4 +71,69 @@ export const staggerItem = {
     y: 0,
     transition: { duration: 0.5 }
   }
+}
+
+// Hover animations
+export const hoverScale = {
+  scale: 1.05,
+  transition: {
+    duration: 0.3,
+    ease: "easeInOut",
+  },
+}
+
+export const hoverLift = {
+  y: -10,
+  transition: {
+    duration: 0.3,
+    ease: "easeInOut",
+  },
+}
+
+// Page transitions
+export const pageTransition = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    transition: {
+      duration: 0.3,
+      ease: "easeIn",
+    },
+  },
+}
+
+// Smooth reveal from bottom with custom delay
+export const revealFromBottom = {
+  hidden: { opacity: 0, y: 100 },
+  visible: (custom: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      delay: custom * 0.2,
+      ease: [0.25, 0.46, 0.45, 0.94],
+    },
+  }),
+}
+
+// Blur in effect
+export const blurIn = {
+  hidden: { opacity: 0, filter: "blur(10px)" },
+  visible: {
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.8,
+      ease: "easeOut",
+    },
+  },
 }

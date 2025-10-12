@@ -23,11 +23,13 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  projects    Project[]
-  skills      Skill[]
-  experiences Experience[]
-  blogPosts   BlogPost[]
-  contacts    Contact[]
+  projects      Project[]
+  skills        Skill[]
+  experiences   Experience[]
+  certificates  Certificate[]
+  educations    Education[]
+  blogPosts     BlogPost[]
+  contacts      Contact[]
 }
 
 // Project model untuk portfolio (enhanced based on blueprint)
@@ -88,6 +90,47 @@ model Experience {
   userId String
 }
 
+// Certificate model untuk certifications & achievements
+model Certificate {
+  id          String    @id @default(uuid())
+  name        String    // e.g., "AWS Certified Solutions Architect"
+  issuer      String    // e.g., "Amazon Web Services"
+  issueDate   DateTime?
+  expiryDate  DateTime? // null if no expiry
+  credentialId String?  // Certificate ID/Code
+  credentialUrl String? // Verification URL
+  description String?   @db.Text
+  imageUrl    String?   // Certificate image
+  isPublished Boolean   @default(true)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+// Education model untuk educational background
+model Education {
+  id          String    @id @default(uuid())
+  institution String    // e.g., "University of XYZ"
+  degree      String    // e.g., "Bachelor of Computer Science"
+  field       String?   // e.g., "Computer Science"
+  startDate   DateTime?
+  endDate     DateTime?
+  isCurrent   Boolean   @default(false)
+  grade       String?   // e.g., "3.8 GPA", "Cum Laude"
+  description String?   @db.Text
+  location    String?   // e.g., "New York, USA"
+  isPublished Boolean   @default(true)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
 // BlogPost model untuk blog section (optional)
 model BlogPost {
   id              String    @id @default(uuid())
@@ -136,6 +179,21 @@ model Settings {
   linkedin    String?
   twitter     String?
   instagram   String?
+  
+  // Status & Quick Stats Fields
+  availabilityStatus     String  @default("available") // "available", "busy", "unavailable"
+  currentActivity        String  @default("Building cool stuff")
+  openToOpportunities    Boolean @default(true)
+  yearsOfExperience      Int?    // Optional manual override, otherwise auto-calculated
+  
+  // Custom Statistics (Optional)
+  customStatLabel1       String?
+  customStatValue1       String?
+  customStatLabel2       String?
+  customStatValue2       String?
+  customStatLabel3       String?
+  customStatValue3       String?
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
