@@ -14,7 +14,7 @@ interface SEOProps {
 
 const siteConfig = {
   name: 'nopianpdlh',
-  defaultTitle: 'Portfolio - Full Stack Developer',
+  defaultTitle: 'Novian Fadhilah - Full Stack Developer',
   defaultDescription: 'Showcasing my projects, skills, and experience as a Full Stack Developer',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   ogImage: '/og-image.jpg',

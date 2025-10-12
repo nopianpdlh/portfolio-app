@@ -59,7 +59,7 @@ export default function Navigation() {
                 whileHover={{ scale: 1.05 }}
                 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
               >
-                Portfolio
+                nopianpdlh
               </motion.span>
             </Link>
 

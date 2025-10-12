@@ -80,7 +80,7 @@ export default function CTASection() {
           </motion.div>
 
           {/* Stats (Optional) */}
-          <motion.div
+          {/* <motion.div
             variants={fadeIn}
             className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 pt-16 border-t"
           >
@@ -100,7 +100,7 @@ export default function CTASection() {
               <div className="text-3xl font-bold text-primary mb-2">100%</div>
               <div className="text-sm text-muted-foreground">Satisfaction Rate</div>
             </div>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
       </div>
     </section>
