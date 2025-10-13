@@ -164,7 +164,7 @@ export default function Footer({ settings }: FooterProps) {
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground text-center sm:text-left">
-            © {currentYear} Portfolio. All rights reserved.
+            © {currentYear} Novian Fadhilah. All rights reserved.
           </p>
           
          
