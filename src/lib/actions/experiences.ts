@@ -29,29 +29,57 @@ export async function getExperienceById(id: string) {
 
 // Create new experience
 export async function createExperience(data: any) {
-  const user = await requireAdmin()
+  try {
+    const user = await requireAdmin()
 
-  // Validate data
-  const validatedData = createExperienceSchema.parse(data)
+    // Verify user exists in database (prevent foreign key error)
+    const userExists = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { id: true }
+    })
 
-  // Get max order for new experience
-  const maxOrder = await prisma.experience.findFirst({
-    orderBy: { order: "desc" },
-    select: { order: true },
-  })
+    if (!userExists) {
+      throw new Error("User tidak ditemukan di database. Silakan logout dan login kembali.")
+    }
 
-  const experience = await prisma.experience.create({
-    data: {
-      ...validatedData,
-      startDate: validatedData.startDate ? new Date(validatedData.startDate) : null,
-      endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
-      order: (maxOrder?.order || 0) + 1,
-      userId: user.id,
-    },
-  })
+    // Validate data
+    const validatedData = createExperienceSchema.parse(data)
 
-  revalidatePath("/admin/experiences")
-  return { success: true, experience }
+    // Get max order for new experience
+    const maxOrder = await prisma.experience.findFirst({
+      orderBy: { order: "desc" },
+      select: { order: true },
+    })
+
+    const experience = await prisma.experience.create({
+      data: {
+        ...validatedData,
+        startDate: validatedData.startDate ? new Date(validatedData.startDate) : null,
+        endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
+        order: (maxOrder?.order || 0) + 1,
+        userId: user.id,
+      },
+    })
+
+    revalidatePath("/admin/experiences")
+    revalidatePath("/")
+    revalidatePath("/about")
+    return { success: true, experience }
+  } catch (error: any) {
+    console.error("[CREATE_EXPERIENCE_ERROR]", error)
+    
+    if (error.code === "P2003") {
+      return {
+        success: false,
+        error: "Terjadi kesalahan autentikasi. Silakan logout dan login kembali."
+      }
+    }
+    
+    return {
+      success: false,
+      error: error.message || "Gagal membuat experience"
+    }
+  }
 }
 
 // Update experience

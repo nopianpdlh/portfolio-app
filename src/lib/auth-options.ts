@@ -16,25 +16,36 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email dan password harus diisi")
         }
 
-        // Find user in database
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
-          }
-        })
+        // Check if credentials match admin env vars
+        const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com"
+        const adminPassword = process.env.ADMIN_PASSWORD || "admin123"
+        
+        const isAdminEnv =
+          credentials.email === adminEmail &&
+          credentials.password === adminPassword
 
-        if (!user) {
+        if (!isAdminEnv) {
           throw new Error("Email atau password salah")
         }
 
-        // Verify password
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
+        // Find or create user in database
+        let user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        })
 
-        if (!isPasswordValid) {
-          throw new Error("Email atau password salah")
+        if (!user) {
+          // Auto-create admin user on first login
+          const hashedPassword = await bcrypt.hash(credentials.password, 10)
+          user = await prisma.user.create({
+            data: {
+              email: credentials.email,
+              password: hashedPassword,
+              name: "Admin",
+              role: "admin",
+              bio: "Portfolio administrator"
+            }
+          })
+          console.log("✅ Auto-created admin user:", user.email)
         }
 
         // Return user object (password excluded)
