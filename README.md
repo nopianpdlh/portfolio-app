@@ -16,7 +16,7 @@ Modern portfolio website with powerful CMS capabilities. Built with Next.js 15, 
 
 ## Tech StackFirst, run the development server:
 
-🌐 **Live Demo**: [Coming Soon]
+🌐 **Live Demo**: (https://novianfdlh.vercel.app/)
 
 
 
