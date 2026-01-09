@@ -2,16 +2,18 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  Briefcase, 
-  Code, 
-  Coffee, 
-  FolderGit2,
-  Sparkles
-} from 'lucide-react'
+  Tick02Icon, 
+  Time04Icon, 
+  Cancel01Icon, 
+  Folder01Icon, 
+  WorkHistoryIcon, 
+  CodeCircleIcon, 
+  Coffee01Icon,
+  SparklesIcon,
+  Briefcase02Icon
+} from '@hugeicons/core-free-icons'
 
 interface StatusQuickStatsProps {
   availabilityStatus: string
@@ -37,21 +39,21 @@ const StatusQuickStats: React.FC<StatusQuickStatsProps> = ({
   // Status badge configuration
   const statusConfig = {
     available: {
-      icon: CheckCircle,
+      icon: Tick02Icon,
       text: 'Available for Work',
       color: 'text-green-500',
       bgColor: 'bg-green-500/10',
       borderColor: 'border-green-500/20',
     },
     busy: {
-      icon: Clock,
+      icon: Time04Icon,
       text: 'Currently Busy',
       color: 'text-yellow-500',
       bgColor: 'bg-yellow-500/10',
       borderColor: 'border-yellow-500/20',
     },
     unavailable: {
-      icon: XCircle,
+      icon: Cancel01Icon,
       text: 'Not Available',
       color: 'text-red-500',
       bgColor: 'bg-red-500/10',
@@ -87,28 +89,28 @@ const StatusQuickStats: React.FC<StatusQuickStatsProps> = ({
   // Default stats
   const defaultStats = [
     {
-      icon: FolderGit2,
+      icon: Folder01Icon,
       label: 'Projects Completed',
       value: stats.projectsCount.toString(),
-      color: 'text-blue-500',
+      color: 'text-primary',
     },
     {
-      icon: Briefcase,
+      icon: WorkHistoryIcon,
       label: 'Years Experience',
       value: stats.yearsExperience.toString(),
-      color: 'text-purple-500',
+      color: 'text-primary',
     },
     {
-      icon: Code,
+      icon: CodeCircleIcon,
       label: 'Technologies',
       value: stats.technologiesCount.toString(),
-      color: 'text-cyan-500',
+      color: 'text-primary',
     },
     {
-      icon: Coffee,
+      icon: Coffee01Icon,
       label: 'Coffee Consumed',
       value: '∞',
-      color: 'text-amber-500',
+      color: 'text-primary',
     },
   ]
 
@@ -117,10 +119,10 @@ const StatusQuickStats: React.FC<StatusQuickStatsProps> = ({
     ? [
         ...defaultStats.slice(0, 3),
         ...stats.customStats.slice(0, 3).map((stat) => ({
-          icon: Sparkles,
+          icon: SparklesIcon,
           label: stat.label,
           value: stat.value,
-          color: 'text-pink-500',
+          color: 'text-primary',
         })),
       ]
     : defaultStats
@@ -131,21 +133,23 @@ const StatusQuickStats: React.FC<StatusQuickStatsProps> = ({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: '-50px' }}
-      className="py-16 px-4 sm:px-6 lg:px-8"
+      className="py-12 px-4 sm:px-6 lg:px-8 bg-background"
     >
       <div className="max-w-7xl mx-auto">
         {/* Status Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {/* Availability Status */}
           <motion.div
             variants={itemVariants}
-            className={`p-6 rounded-2xl border ${currentStatus.borderColor} ${currentStatus.bgColor} backdrop-blur-sm`}
+            className="p-6 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
           >
-            <div className="flex items-center gap-3">
-              <StatusIcon className={`w-6 h-6 ${currentStatus.color}`} />
+            <div className="flex items-center gap-4">
+              <div className={`p-3 rounded-full ${currentStatus.bgColor}`}>
+                <HugeiconsIcon icon={StatusIcon} size={24} className={currentStatus.color} />
+              </div>
               <div>
-                <p className="text-sm text-muted-foreground">Status</p>
-                <p className={`font-semibold ${currentStatus.color}`}>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Status</p>
+                <p className={`font-bold ${currentStatus.color}`}>
                   {currentStatus.text}
                 </p>
               </div>
@@ -155,13 +159,15 @@ const StatusQuickStats: React.FC<StatusQuickStatsProps> = ({
           {/* Current Activity */}
           <motion.div
             variants={itemVariants}
-            className="p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm"
+            className="p-6 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
           >
-            <div className="flex items-center gap-3">
-              <Code className="w-6 h-6 text-primary" />
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-full bg-primary/10">
+                <HugeiconsIcon icon={CodeCircleIcon} size={24} className="text-primary" />
+              </div>
               <div>
-                <p className="text-sm text-muted-foreground">Current Activity</p>
-                <p className="font-semibold text-foreground">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Current Activity</p>
+                <p className="font-bold text-foreground">
                   {currentActivity}
                 </p>
               </div>
@@ -171,25 +177,19 @@ const StatusQuickStats: React.FC<StatusQuickStatsProps> = ({
           {/* Open to Opportunities */}
           <motion.div
             variants={itemVariants}
-            className={`p-6 rounded-2xl border ${
-              openToOpportunities
-                ? 'border-green-500/20 bg-green-500/10'
-                : 'border-border/50 bg-card/50'
-            } backdrop-blur-sm`}
+            className="p-6 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
           >
-            <div className="flex items-center gap-3">
-              <Briefcase
-                className={`w-6 h-6 ${
-                  openToOpportunities ? 'text-green-500' : 'text-muted-foreground'
-                }`}
-              />
+            <div className="flex items-center gap-4">
+              <div className={`p-3 rounded-full ${openToOpportunities ? 'bg-green-500/10' : 'bg-muted'}`}>
+                <HugeiconsIcon 
+                  icon={Briefcase02Icon} 
+                  size={24} 
+                  className={openToOpportunities ? 'text-green-500' : 'text-muted-foreground'} 
+                />
+              </div>
               <div>
-                <p className="text-sm text-muted-foreground">Opportunities</p>
-                <p
-                  className={`font-semibold ${
-                    openToOpportunities ? 'text-green-500' : 'text-foreground'
-                  }`}
-                >
+                <p className="text-sm font-medium text-muted-foreground mb-1">Opportunities</p>
+                <p className={`font-bold ${openToOpportunities ? 'text-green-500' : 'text-foreground'}`}>
                   {openToOpportunities ? 'Open to Work' : 'Not Accepting'}
                 </p>
               </div>
@@ -199,21 +199,22 @@ const StatusQuickStats: React.FC<StatusQuickStatsProps> = ({
 
         {/* Quick Stats Grid */}
         <motion.div variants={itemVariants}>
-          <h3 className="text-2xl font-bold mb-6 text-center">Quick Stats</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {allStats.map((stat, index) => {
               const StatIcon = stat.icon
               return (
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  whileHover={{ scale: 1.05, y: -5 }}
+                  whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
-                  className="p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow"
+                  className="p-8 rounded-2xl border border-border/40 bg-background/50 backdrop-blur-sm hover:shadow-md transition-all text-center group"
                 >
-                  <StatIcon className={`w-8 h-8 ${stat.color} mb-3`} />
-                  <p className="text-3xl font-bold mb-1">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                  <div className="inline-flex p-4 rounded-2xl bg-primary/5 text-primary mb-4 group-hover:bg-primary/10 transition-colors">
+                    <HugeiconsIcon icon={StatIcon} size={32} />
+                  </div>
+                  <p className="text-4xl font-bold mb-2 tracking-tight">{stat.value}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
                 </motion.div>
               )
             })}
