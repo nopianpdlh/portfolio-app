@@ -63,6 +63,7 @@ model Project {
 model Skill {
   id        String   @id @default(uuid())
   name      String   // e.g., "NextJS"
+  iconUrl   String?  // URL to SVG icon in Supabase Storage
   category  String?  // e.g., "Frontend", "Backend", "Languages"
   level     String?  // e.g., "Advanced", "Intermediate", "Beginner"
   order     Int      @default(0)
