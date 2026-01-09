@@ -24,13 +24,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { GripVertical, Edit, Trash2, Save, X } from "lucide-react"
+import { GripVertical, Edit, Trash2, Save, X, FileCode } from "lucide-react"
 import { updateSkill, deleteSkill } from "@/lib/actions/skills"
 import { toast } from "sonner"
+import SvgUpload from "./SvgUpload"
 
 interface Skill {
   id: string
   name: string
+  iconUrl: string | null
   category: string | null
   level: string | null
   order: number
@@ -49,6 +51,7 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editData, setEditData] = useState({
     name: skill.name,
+    iconUrl: skill.iconUrl,
     category: skill.category || "Other",
     level: skill.level || "Intermediate",
   })
@@ -164,6 +167,16 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
         </>
       ) : (
         <>
+          {/* Icon Display */}
+          {skill.iconUrl ? (
+            <div className="w-8 h-8 flex-shrink-0">
+              <img src={skill.iconUrl} alt={skill.name} className="w-full h-full object-contain" />
+            </div>
+          ) : (
+            <div className="w-8 h-8 flex-shrink-0 bg-muted rounded flex items-center justify-center">
+              <FileCode className="w-4 h-4 text-muted-foreground" />
+            </div>
+          )}
           <div className="flex-1">
             <span className="font-medium">{skill.name}</span>
           </div>
@@ -194,6 +207,7 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
                 setIsEditing(false)
                 setEditData({
                   name: skill.name,
+                  iconUrl: skill.iconUrl,
                   category: skill.category || "Other",
                   level: skill.level || "Intermediate",
                 })
