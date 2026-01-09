@@ -33,6 +33,7 @@ interface Skill {
   id: string
   name: string
   iconUrl: string | null
+  iconUrlDark: string | null
   category: string | null
   level: string | null
   order: number
@@ -52,6 +53,7 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
   const [editData, setEditData] = useState({
     name: skill.name,
     iconUrl: skill.iconUrl,
+    iconUrlDark: skill.iconUrlDark,
     category: skill.category || "Other",
     level: skill.level || "Intermediate",
   })
@@ -164,6 +166,23 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
               ))}
             </SelectContent>
           </Select>
+          {/* Icon Upload in Edit Mode - Light & Dark */}
+          <div className="flex gap-2">
+            <div className="w-20">
+              <span className="text-xs text-muted-foreground block mb-1">Light</span>
+              <SvgUpload
+                value={editData.iconUrl}
+                onChange={(url) => setEditData({ ...editData, iconUrl: url })}
+              />
+            </div>
+            <div className="w-20">
+              <span className="text-xs text-muted-foreground block mb-1">Dark</span>
+              <SvgUpload
+                value={editData.iconUrlDark}
+                onChange={(url) => setEditData({ ...editData, iconUrlDark: url })}
+              />
+            </div>
+          </div>
         </>
       ) : (
         <>
@@ -208,6 +227,7 @@ export default function SkillCard({ skill, categories, levels }: SkillCardProps)
                 setEditData({
                   name: skill.name,
                   iconUrl: skill.iconUrl,
+                  iconUrlDark: skill.iconUrlDark,
                   category: skill.category || "Other",
                   level: skill.level || "Intermediate",
                 })

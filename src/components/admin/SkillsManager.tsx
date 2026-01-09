@@ -37,6 +37,7 @@ interface Skill {
   id: string
   name: string
   iconUrl: string | null
+  iconUrlDark: string | null
   category: string | null
   level: string | null
   order: number
@@ -59,6 +60,7 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
   const [newSkill, setNewSkill] = useState({
     name: "",
     iconUrl: null as string | null,
+    iconUrlDark: null as string | null,
     category: "Frontend",
     level: "Intermediate",
   })
@@ -132,7 +134,7 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
     setIsSubmitting(true)
     try {
       await createSkill(newSkill)
-      setNewSkill({ name: "", iconUrl: null, category: "Frontend", level: "Intermediate" })
+      setNewSkill({ name: "", iconUrl: null, iconUrlDark: null, category: "Frontend", level: "Intermediate" })
       setIsAdding(false)
       toast.success("Skill added successfully!")
       router.refresh()
@@ -220,12 +222,25 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
               </Select>
             </div>
             {/* Icon Upload */}
+            {/* Icon Upload - Light & Dark */}
             <div>
-              <Label>Icon (Optional)</Label>
-              <SvgUpload
-                value={newSkill.iconUrl}
-                onChange={(url) => setNewSkill({ ...newSkill, iconUrl: url })}
-              />
+              <Label>Icons (Optional)</Label>
+              <div className="flex gap-3 mt-2">
+                <div>
+                  <span className="text-xs text-muted-foreground block mb-1">Light/Default</span>
+                  <SvgUpload
+                    value={newSkill.iconUrl}
+                    onChange={(url) => setNewSkill({ ...newSkill, iconUrl: url })}
+                  />
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block mb-1">Dark (Optional)</span>
+                  <SvgUpload
+                    value={newSkill.iconUrlDark}
+                    onChange={(url) => setNewSkill({ ...newSkill, iconUrlDark: url })}
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex gap-2">
@@ -235,7 +250,7 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
             </Button>
             <Button variant="outline" onClick={() => {
               setIsAdding(false)
-              setNewSkill({ name: "", iconUrl: null, category: "Frontend", level: "Intermediate" })
+              setNewSkill({ name: "", iconUrl: null, iconUrlDark: null, category: "Frontend", level: "Intermediate" })
             }}>
               Cancel
             </Button>
