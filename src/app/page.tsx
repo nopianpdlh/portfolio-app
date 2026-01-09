@@ -2,7 +2,6 @@ import { getSiteSettings } from "@/lib/actions/public"
 import PublicLayout from "@/components/layout/PublicLayout"
 import HeroSection from "@/components/home/HeroSection"
 import FeaturedProjects from "@/components/home/FeaturedProjects"
-import SkillsPreview from "@/components/home/SkillsPreview"
 import CTASection from "@/components/home/CTASection"
 import { generateSEO, generateWebsiteSchema, generatePersonSchema, siteConfig } from "@/lib/seo"
 
@@ -51,7 +50,6 @@ export default async function HomePage() {
       <main className="min-h-screen">
         <HeroSection settings={settings} />
         <FeaturedProjects />
-        <SkillsPreview />
         <CTASection />
       </main>
     </PublicLayout>

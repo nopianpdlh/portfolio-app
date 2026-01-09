@@ -2,105 +2,101 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { Mail, ArrowRight } from "lucide-react"
-import { fadeIn, slideUp } from "@/lib/animations"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Coffee01Icon, BulbIcon, Comment01Icon, Mail02Icon, TwitterIcon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { fadeIn, staggerContainer, staggerItem } from "@/lib/animations"
 import { Button } from "@/components/ui/button"
 
 export default function CTASection() {
+  const socialLinks = [
+    {
+      icon: Coffee01Icon,
+      label: "Love coffee?",
+      text: "Let's grab a cup sometime",
+      href: "/contact",
+    },
+    {
+      icon: BulbIcon,
+      label: "Have an idea?",
+      text: "Let's turn it into reality",
+      href: "/contact",
+    },
+    {
+      icon: Comment01Icon,
+      label: "Just curious?",
+      text: "Feel free to ask me anything",
+      href: "/contact",
+    },
+  ]
+
   return (
-    <section className="py-20 bg-gradient-to-br from-primary/10 via-primary/5 to-background relative overflow-hidden">
+    <section className="py-24 bg-foreground text-background relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="max-w-3xl mx-auto text-center"
+          className="max-w-4xl mx-auto"
         >
-          <motion.div
-            variants={fadeIn}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6"
-          >
-            <Mail className="w-8 h-8 text-primary" />
+          {/* Header */}
+          <motion.div variants={staggerItem} className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+              Let's get in touch.
+            </h2>
+            <p className="text-xl text-background/80 max-w-2xl mx-auto">
+              I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions.
+            </p>
           </motion.div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6"
+          {/* Interactive Cards */}
+          <motion.div 
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20"
           >
-            Let's Work Together
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-lg text-muted-foreground mb-8 leading-relaxed"
-          >
-            Have a project in mind or want to collaborate? I'm always open to discussing new
-            opportunities, creative ideas, or partnerships. Let's bring your vision to life!
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-          >
-            <Button asChild size="lg" className="group">
-              <Link href="/contact">
-                Get In Touch
-                <motion.span
-                  className="ml-2 inline-block"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </motion.span>
-              </Link>
-            </Button>
-
-            <Button asChild size="lg" variant="outline">
-              <Link href="/about">Learn More About Me</Link>
-            </Button>
+            {socialLinks.map((item, index) => (
+              <motion.div key={index} variants={staggerItem}>
+                <Link href={item.href} className="block group">
+                  <div className="bg-background/5 border border-white/10 p-8 rounded-3xl h-full backdrop-blur-sm transition-all duration-300 group-hover:bg-background/10 group-hover:-translate-y-2">
+                    <HugeiconsIcon icon={item.icon} size={40} className="mb-6 text-primary group-hover:scale-110 transition-transform" />
+                    <h3 className="text-2xl font-bold mb-2">{item.label}</h3>
+                    <p className="text-background/60">{item.text}</p>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </motion.div>
 
-          {/* Stats (Optional) */}
-          {/* <motion.div
-            variants={fadeIn}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 pt-16 border-t"
+          {/* Direct Contact Links */}
+          <motion.div 
+            variants={staggerItem}
+            className="flex flex-col md:flex-row gap-8 justify-center items-center border-t border-white/10 pt-12 text-lg"
           >
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">5+</div>
-              <div className="text-sm text-muted-foreground">Years Experience</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">50+</div>
-              <div className="text-sm text-muted-foreground">Projects Completed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">30+</div>
-              <div className="text-sm text-muted-foreground">Happy Clients</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">100%</div>
-              <div className="text-sm text-muted-foreground">Satisfaction Rate</div>
-            </div>
-          </motion.div> */}
+            <span className="text-background/60">Contact me via</span>
+            
+            <a href="mailto:nopian@example.com" className="flex items-center gap-2 hover:text-primary transition-colors font-medium">
+              <HugeiconsIcon icon={Mail02Icon} size={24} />
+              <span>nopian@example.com</span>
+            </a>
+            
+            <span className="hidden md:inline text-background/20">•</span>
+            
+            <a href="https://twitter.com/nopian" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors font-medium">
+              <HugeiconsIcon icon={TwitterIcon} size={24} />
+              <span>@nopian</span>
+            </a>
+          </motion.div>
+
+          {/* Footer Attribution */}
+          <motion.div variants={staggerItem} className="text-center mt-24 text-background/40 text-sm">
+            <p>Made with Next.js and designed happily using Tailwind by Nopian</p>
+          </motion.div>
         </motion.div>
       </div>
     </section>

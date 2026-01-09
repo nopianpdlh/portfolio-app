@@ -7,7 +7,7 @@ import SkillsMatrix from "@/components/about/SkillsMatrix"
 import ExperienceTimeline from "@/components/about/ExperienceTimeline"
 import CertificatesSection from "@/components/about/CertificatesSection"
 import EducationSection from "@/components/about/EducationSection"
-import AboutCTA from "@/components/about/AboutCTA"
+import CTASection from "@/components/home/CTASection"
 import { generateSEO } from "@/lib/seo"
 
 export const metadata = generateSEO({
@@ -48,7 +48,7 @@ export default async function AboutPage() {
         <ExperienceTimeline experiences={experiences} />
         <CertificatesSection certificates={certificates} />
         <EducationSection educations={educations} />
-        <AboutCTA settings={settings} />
+        <CTASection />
       </main>
     </PublicLayout>
   )
