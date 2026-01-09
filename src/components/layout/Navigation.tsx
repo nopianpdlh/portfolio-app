@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button"
 const navLinks = [
   { href: "/", label: "Home", icon: Home01Icon },
   { href: "/projects", label: "Projects", icon: Rocket01Icon },
-  { href: "/about", label: "About", icon: UserCircleIcon },
   { href: "/contact", label: "Contact", icon: Mail01Icon },
 ]
 
