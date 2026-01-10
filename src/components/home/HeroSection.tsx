@@ -27,7 +27,7 @@ export default function HeroSection({ settings }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
       {/* Grid Pattern Background */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.4] bg-grid-small-black/[0.2] dark:bg-grid-small-white/[0.1] mask-image-gradient" />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.4] bg-grid-small-black dark:bg-grid-small-white mask-image-gradient" />
       
       {/* Gradient Mesh behind text */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -79,9 +79,9 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             className="flex flex-col md:flex-row items-center gap-6 mt-16 md:mt-24"
           >
             <div className="flex items-center gap-4 text-lg text-muted-foreground p-6 bg-secondary/50 rounded-2xl border border-border/50 backdrop-blur-sm">
-              <span className="font-bold text-4xl text-foreground">5+</span>
+              <span className="font-bold text-4xl text-foreground">1+</span>
               <div className="flex flex-col leading-tight">
-                <span>Years of</span>
+                <span>Hands-On</span>
                 <span>Experience</span>
               </div>
             </div>
@@ -89,8 +89,9 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             <p className="text-lg text-muted-foreground max-w-sm md:text-left text-center">
               Building scalable applications with modern technologies like{" "}
               <strong className="text-foreground">Next.js</strong>,{" "}
-              <strong className="text-foreground">TypeScript</strong>, and{" "}
-              <strong className="text-foreground">Tailwind CSS</strong>.
+              <strong className="text-foreground">TypeScript</strong>,{" "}
+              <strong className="text-foreground">Tailwind CSS</strong> {" "}
+              through academic projects and self-study.
             </p>
           </motion.div>
 
