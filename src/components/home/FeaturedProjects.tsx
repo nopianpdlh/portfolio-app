@@ -10,7 +10,6 @@ import { getPublishedProjects } from "@/lib/actions/public"
 import { staggerContainer, staggerItem } from "@/lib/animations"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card } from "@/components/ui/card"
 
 interface Project {
   id: string
@@ -33,7 +32,6 @@ export default function FeaturedProjects() {
     async function fetchProjects() {
       const result = await getPublishedProjects()
       if (result.success && result.data) {
-        // Show only featured projects, limit to 4
         const featured = result.data.filter((p) => p.isFeatured).slice(0, 4)
         setProjects(featured)
       }
@@ -65,11 +63,12 @@ export default function FeaturedProjects() {
   }
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden" id="projects">
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-b from-secondary/30 to-transparent opacity-50 blur-3xl -z-10" />
+    <section className="py-24 relative overflow-hidden" id="projects">
+      {/* Grid Background Pattern */}
+      <div className="absolute inset-0 bg-grid-small-black dark:bg-grid-small-white -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background -z-10" />
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -84,12 +83,12 @@ export default function FeaturedProjects() {
                   Highlighted Projects
                 </h2>
               </div>
-              <p className="text-muted-foreground text-lg max-w-2xl">
+              <p className="text-muted-foreground text-lg max-w-2xl bg-background/50 backdrop-blur-sm p-2 rounded-lg inline-block">
                 A selection of my favorite works, ranging from web applications to open source tools.
               </p>
             </div>
 
-            <Button asChild variant="ghost" className="group hidden md:inline-flex">
+            <Button asChild variant="ghost" className="group hidden md:inline-flex bg-background/50 backdrop-blur-sm border border-border/50">
               <Link href="/projects" className="text-lg">
                 View All Projects
                 <HugeiconsIcon icon={ArrowRight01Icon} size={20} className="ml-2 transition-transform group-hover:translate-x-1" />
@@ -102,14 +101,15 @@ export default function FeaturedProjects() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16"
         >
           {projects.map((project, index) => (
-            <motion.div key={project.id} variants={staggerItem}>
-              <Card className="group relative overflow-hidden rounded-[2rem] border-border/50 bg-secondary/20 hover:bg-secondary/40 transition-all duration-300 h-full flex flex-col hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1">
-                
-                {/* Project Image Area */}
-                <div className="relative aspect-[16/10] overflow-hidden m-4 mb-0 rounded-t-2xl rounded-b-lg shadow-sm group-hover:shadow-md transition-shadow">
+            <motion.div key={project.id} variants={staggerItem} className="h-full">
+              {/* Glassmorphism Card Content (Simplified) */}
+              <div className="relative flex flex-col h-full w-full rounded-[2.4rem] bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-xl overflow-hidden transition-all duration-300 group hover:shadow-2xl hover:-translate-y-1">
+              
+                {/* Project Image Area with Overlay */}
+                <div className="relative aspect-[16/10] overflow-hidden m-2 mb-0 rounded-t-[2rem] rounded-b-xl shadow-inner group-hover:shadow-md transition-shadow">
                   {project.images[0] ? (
                     <Image
                       src={project.images[0]}
@@ -118,23 +118,23 @@ export default function FeaturedProjects() {
                       className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-muted/50">
+                    <div className="w-full h-full flex items-center justify-center bg-secondary/30">
                       <span className="text-6xl font-bold text-muted-foreground/10 select-none">
                         {project.title[0]}
                       </span>
                     </div>
                   )}
                   
-                  {/* Overlay Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
                 </div>
 
-                <div className="p-8 flex flex-col flex-grow">
+                <div className="p-8 flex flex-col flex-grow relative">
                   <div className="flex flex-col gap-4 mb-6">
                     <div className="flex justify-between items-start gap-4">
                       <div>
                         {project.category && (
-                           <span className="text-sm font-medium text-primary mb-2 block tracking-wide uppercase">
+                           <span className="text-sm font-semibold text-primary mb-2 block tracking-wider uppercase drop-shadow-sm">
                             {project.category}
                           </span>
                         )}
@@ -150,7 +150,7 @@ export default function FeaturedProjects() {
                             href={project.repoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2.5 rounded-full bg-background border hover:border-primary hover:text-primary transition-colors"
+                            className="p-3 rounded-full bg-background/50 border border-white/20 hover:border-primary hover:text-primary transition-all hover:scale-110 backdrop-blur-md"
                             aria-label="View Code"
                           >
                             <HugeiconsIcon icon={GithubIcon} size={20} />
@@ -161,7 +161,7 @@ export default function FeaturedProjects() {
                             href={project.liveUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+                            className="p-3 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-110 shadow-lg shadow-primary/25"
                             aria-label="View Live Project"
                           >
                             <HugeiconsIcon icon={LinkSquare01Icon} size={20} />
@@ -175,33 +175,33 @@ export default function FeaturedProjects() {
                     </p>
                   </div>
 
-                  <div className="mt-auto">
+                  <div className="mt-auto pt-6 border-t border-white/10 dark:border-white/5">
                     <div className="flex flex-wrap gap-2">
                       {project.techStack.slice(0, 4).map((tech) => (
                         <Badge 
                           key={tech} 
                           variant="secondary" 
-                          className="font-normal text-sm px-3 py-1 bg-background/50 backdrop-blur-sm border-border/50"
+                          className="font-medium text-sm px-3 py-1 bg-white/20 dark:bg-white/5 backdrop-blur-md border border-white/10 text-foreground"
                         >
                           {tech}
                         </Badge>
                       ))}
                       {project.techStack.length > 4 && (
-                        <Badge variant="outline" className="text-xs px-2">
+                        <Badge variant="outline" className="text-xs px-2 bg-transparent border-white/20">
                           +{project.techStack.length - 4}
                         </Badge>
                       )}
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
             </motion.div>
           ))}
         </motion.div>
 
         {/* Mobile View All Button */}
         <div className="md:hidden text-center">
-            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
+            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto bg-background/50 backdrop-blur-sm">
               <Link href="/projects">
                 View All Projects
                 <HugeiconsIcon icon={ArrowRight01Icon} size={20} className="ml-2" />

@@ -39,7 +39,10 @@ export default function EducationSection({ educations }: EducationSectionProps) 
   }
 
   return (
-    <section className="py-24 bg-background">
+    <section className="py-24 relative overflow-hidden">
+      {/* Grid Background Pattern */}
+      <div className="absolute inset-0 bg-grid-small-black dark:bg-grid-small-white -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background -z-10" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -173,7 +176,7 @@ export default function EducationSection({ educations }: EducationSectionProps) 
             </div>
             {educations.some((e) => e.isCurrent) && (
               <div className="text-center">
-                <div className="text-4xl font-bold text-green-600 mb-1">
+                <div className="text-4xl font-bold text-blue-600 mb-1">
                   {educations.filter((e) => e.isCurrent).length}
                 </div>
                 <div className="text-sm font-medium text-muted-foreground">Currently Pursuing</div>
