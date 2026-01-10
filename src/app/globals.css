@@ -198,3 +198,38 @@
     @apply bg-background/60 backdrop-blur-lg border border-border/50;
   }
 }
+@utility animate-scroll {
+  animation: scroll 40s linear infinite;
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@utility bg-grid-black {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, oklch(0.45 0.2 245 / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.45 0.2 245 / 0.1) 1px, transparent 1px);
+}
+
+@utility bg-grid-white {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, oklch(0.45 0.2 245 / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.45 0.2 245 / 0.1) 1px, transparent 1px);
+}
+
+@utility bg-grid-small-black {
+  background-size: 20px 20px;
+  background-image: linear-gradient(to right, oklch(0.45 0.2 245 / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.45 0.2 245 / 0.1) 1px, transparent 1px);
+}
+
+@utility bg-grid-small-white {
+  background-size: 20px 20px;
+  background-image: linear-gradient(to right, oklch(0.45 0.2 245 / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.45 0.2 245 / 0.1) 1px, transparent 1px);
+}
