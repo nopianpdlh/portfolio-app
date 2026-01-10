@@ -2,6 +2,8 @@ import * as z from "zod"
 
 export const skillSchema = z.object({
   name: z.string().min(1, "Skill name is required").max(50, "Name too long"),
+  iconUrl: z.string().url().optional().nullable(),
+  iconUrlDark: z.string().url().optional().nullable(),
   category: z.string().optional().nullable(),
   level: z.string().optional().nullable(),
   order: z.number().int().min(0).default(0),

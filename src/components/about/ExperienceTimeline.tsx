@@ -1,7 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Briefcase, MapPin, Calendar } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Briefcase02Icon, Calendar03Icon } from "@hugeicons/core-free-icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { staggerContainer, staggerItem } from "@/lib/animations"
@@ -35,17 +36,17 @@ export default function ExperienceTimeline({ experiences }: ExperienceTimelinePr
   }
 
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-24 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Work Experience</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Work Experience</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             My professional journey and the roles I've held
           </p>
         </motion.div>
@@ -59,48 +60,53 @@ export default function ExperienceTimeline({ experiences }: ExperienceTimelinePr
         >
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border hidden md:block" />
+            <div className="absolute left-8 top-0 bottom-0 w-[2px] bg-border hidden md:block" />
 
             {/* Timeline items */}
-            <div className="space-y-8">
+            <div className="space-y-12">
               {experiences.map((exp, index) => (
                 <motion.div key={exp.id} variants={staggerItem}>
-                  <Card className="p-6 md:ml-20 hover:shadow-lg transition-shadow">
+                  <div className="relative">
                     {/* Timeline dot */}
-                    <div className="absolute left-6 w-5 h-5 rounded-full bg-primary border-4 border-background hidden md:block" />
-
-                    {/* Content */}
-                    <div className="space-y-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                          <h3 className="text-xl font-bold">{exp.title}</h3>
-                          {exp.company && (
-                            <div className="flex items-center gap-2 text-muted-foreground mt-1">
-                              <Briefcase className="w-4 h-4" />
-                              <span>{exp.company}</span>
-                            </div>
+                    <div className="absolute left-6 w-5 h-5 -translate-x-1.5 rounded-full bg-primary ring-4 ring-background hidden md:block" />
+                    
+                    <Card className="p-8 md:ml-20 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 border-border/50 hover:border-primary/20 group">
+                      <div className="space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                          <div>
+                            <h3 className="text-xl sm:text-2xl font-bold group-hover:text-primary transition-colors">
+                              {exp.title}
+                            </h3>
+                            {exp.company && (
+                              <div className="flex items-center gap-2 text-muted-foreground mt-2 font-medium">
+                                <HugeiconsIcon icon={Briefcase02Icon} size={18} />
+                                <span>{exp.company}</span>
+                              </div>
+                            )}
+                          </div>
+                          {exp.isCurrent && (
+                            <Badge className="w-fit bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
+                              Current Role
+                            </Badge>
                           )}
                         </div>
-                        {exp.isCurrent && (
-                          <Badge className="w-fit">Current</Badge>
+
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 w-fit px-3 py-1 rounded-full">
+                          <HugeiconsIcon icon={Calendar03Icon} size={16} />
+                          <span>
+                            {formatDate(exp.startDate)} -{" "}
+                            {exp.isCurrent ? "Present" : formatDate(exp.endDate)}
+                          </span>
+                        </div>
+
+                        {exp.description && (
+                          <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-base border-t border-border/50 pt-4 mt-2">
+                            {exp.description}
+                          </p>
                         )}
                       </div>
-
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="w-4 h-4" />
-                        <span>
-                          {formatDate(exp.startDate)} -{" "}
-                          {exp.isCurrent ? "Present" : formatDate(exp.endDate)}
-                        </span>
-                      </div>
-
-                      {exp.description && (
-                        <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                          {exp.description}
-                        </p>
-                      )}
-                    </div>
-                  </Card>
+                    </Card>
+                  </div>
                 </motion.div>
               ))}
             </div>

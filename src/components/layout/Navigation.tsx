@@ -4,28 +4,19 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Menu01Icon, Cancel01Icon, Home01Icon, Rocket01Icon, UserCircleIcon, Mail01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/projects", label: "Projects" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "Home", icon: Home01Icon },
+  { href: "/projects", label: "Projects", icon: Rocket01Icon },
+  { href: "/contact", label: "Contact", icon: Mail01Icon },
 ]
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -42,126 +33,99 @@ export default function Navigation() {
   return (
     <>
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-background/80 backdrop-blur-md border-b shadow-sm"
-            : "bg-transparent"
-        }`}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="fixed top-4 left-0 right-0 z-50 flex justify-center pointer-events-none px-4"
       >
-        <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center">
-              <motion.span
-                whileHover={{ scale: 1.05 }}
-                className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
-              >
-                nopianpdlh
-              </motion.span>
-            </Link>
+        <nav className="pointer-events-auto flex items-center justify-between gap-2 p-2 rounded-full border border-white/20 bg-white/50 dark:bg-black/50 backdrop-blur-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 max-w-2xl w-full sm:w-auto sm:min-w-[400px]">
+          
+          {/* Logo (Mobile Only or Left Side) */}
+          <Link href="/" className="flex items-center px-4 sm:hidden">
+            <span className="font-bold text-lg tracking-tight">nopian.</span>
+          </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors relative ${
-                      isActive(link.href)
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {link.label}
-                    {isActive(link.href) && (
-                      <motion.div
-                        layoutId="activeNav"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                      />
-                    )}
-                  </motion.div>
-                </Link>
-              ))}
-            </div>
-
-            {/* CTA Button (Desktop) */}
-            <div className="hidden md:block">
-              <Button asChild size="sm">
-                <Link href="/contact">Get In Touch</Link>
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden p-2 rounded-md hover:bg-muted transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
+          {/* Desktop Navigation */}
+          <div className="hidden sm:flex items-center gap-1 mx-auto">
+            {navLinks.map((link) => (
+              <Link key={link.href} href={link.href}>
+                <motion.div
+                  className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                    isActive(link.href)
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isActive(link.href) && (
+                    <motion.div
+                      layoutId="navBubble"
+                      className="absolute inset-0 bg-white dark:bg-white/10 rounded-full shadow-sm"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      style={{ zIndex: -1 }}
+                    />
+                  )}
+                  <span className="relative z-10">{link.label}</span>
+                </motion.div>
+              </Link>
+            ))}
           </div>
+
+          {/* Mobile Menu Toggle */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setIsOpen(!isOpen)}
+            className="sm:hidden p-2 rounded-full hover:bg-muted/50 transition-colors"
+          >
+            {isOpen ? (
+              <HugeiconsIcon icon={Cancel01Icon} size={24} />
+            ) : (
+              <HugeiconsIcon icon={Menu01Icon} size={24} />
+            )}
+          </motion.button>
         </nav>
       </motion.header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 sm:hidden"
             />
-
-            {/* Menu Panel */}
             <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              initial={{ y: "-100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-16 right-0 bottom-0 w-64 bg-background border-l shadow-lg z-40 md:hidden"
+              className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-b z-40 sm:hidden pt-24 pb-8 px-6 shadow-2xl rounded-b-[2rem]"
             >
-              <div className="flex flex-col p-6 space-y-4">
+              <div className="flex flex-col space-y-2">
                 {navLinks.map((link) => (
                   <Link key={link.href} href={link.href}>
                     <motion.div
-                      whileTap={{ scale: 0.95 }}
-                      className={`px-4 py-3 rounded-md text-base font-medium transition-colors ${
+                      whileTap={{ scale: 0.98 }}
+                      className={`p-4 rounded-xl text-lg font-medium flex items-center gap-4 ${
                         isActive(link.href)
                           ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          : "text-muted-foreground hover:bg-muted"
                       }`}
                     >
+                      <HugeiconsIcon icon={link.icon} size={24} className="opacity-70" />
                       {link.label}
                     </motion.div>
                   </Link>
                 ))}
-
-                <div className="pt-4 border-t">
-                  <Button asChild className="w-full">
-                    <Link href="/contact">Get In Touch</Link>
-                  </Button>
-                </div>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
-
-      {/* Spacer to prevent content from going under fixed header */}
-      <div className="h-16" />
     </>
   )
 }

@@ -1,21 +1,35 @@
-import { getSiteSettings } from "@/lib/actions/public"
+import { getSiteSettings, getPublishedExperiences, getPublishedCertificates, getPublishedEducations, getPublishedSkills } from "@/lib/actions/public"
 import PublicLayout from "@/components/layout/PublicLayout"
 import HeroSection from "@/components/home/HeroSection"
+import TechStackLoop from "@/components/home/TechStackLoop"
 import FeaturedProjects from "@/components/home/FeaturedProjects"
-import SkillsPreview from "@/components/home/SkillsPreview"
+import ExperienceTimeline from "@/components/about/ExperienceTimeline"
+import EducationSection from "@/components/about/EducationSection"
+import CertificatesSection from "@/components/about/CertificatesSection"
 import CTASection from "@/components/home/CTASection"
 import { generateSEO, generateWebsiteSchema, generatePersonSchema, siteConfig } from "@/lib/seo"
 
 export const metadata = generateSEO({
   title: "Home",
-  description: "Welcome to my portfolio website showcasing my projects, skills, and experience as a Full Stack Developer",
+  description: "Welcome to my portfolio - Full Stack Developer showcasing projects, education, certifications, and experience",
   url: "/",
-  keywords: ["portfolio", "web developer", "projects", "skills"],
+  keywords: ["portfolio", "web developer", "projects", "full stack", "developer"],
 })
 
 export default async function HomePage() {
-  const settingsResult = await getSiteSettings()
+  const [settingsResult, experiencesResult, certificatesResult, educationsResult, skillsResult] = await Promise.all([
+    getSiteSettings(),
+    getPublishedExperiences(),
+    getPublishedCertificates(),
+    getPublishedEducations(),
+    getPublishedSkills(),
+  ])
+
   const settings = settingsResult.success ? settingsResult.data : null
+  const experiences = experiencesResult.success && experiencesResult.data ? experiencesResult.data : []
+  const certificates = certificatesResult.success && certificatesResult.data ? certificatesResult.data : []
+  const educations = educationsResult.success && educationsResult.data ? educationsResult.data : []
+  const skills = skillsResult.success && skillsResult.data ? skillsResult.data : []
 
   // Generate JSON-LD structured data
   const websiteSchema = generateWebsiteSchema({
@@ -50,8 +64,11 @@ export default async function HomePage() {
       />
       <main className="min-h-screen">
         <HeroSection settings={settings} />
+        <TechStackLoop skills={skills} />
         <FeaturedProjects />
-        <SkillsPreview />
+        <EducationSection educations={educations} />
+        <CertificatesSection certificates={certificates} />
+        <ExperienceTimeline experiences={experiences} />
         <CTASection />
       </main>
     </PublicLayout>
