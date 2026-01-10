@@ -1,6 +1,7 @@
-import { getSiteSettings, getPublishedExperiences, getPublishedCertificates, getPublishedEducations } from "@/lib/actions/public"
+import { getSiteSettings, getPublishedExperiences, getPublishedCertificates, getPublishedEducations, getPublishedSkills } from "@/lib/actions/public"
 import PublicLayout from "@/components/layout/PublicLayout"
 import HeroSection from "@/components/home/HeroSection"
+import TechStackLoop from "@/components/home/TechStackLoop"
 import FeaturedProjects from "@/components/home/FeaturedProjects"
 import ExperienceTimeline from "@/components/about/ExperienceTimeline"
 import EducationSection from "@/components/about/EducationSection"
@@ -16,17 +17,19 @@ export const metadata = generateSEO({
 })
 
 export default async function HomePage() {
-  const [settingsResult, experiencesResult, certificatesResult, educationsResult] = await Promise.all([
+  const [settingsResult, experiencesResult, certificatesResult, educationsResult, skillsResult] = await Promise.all([
     getSiteSettings(),
     getPublishedExperiences(),
     getPublishedCertificates(),
     getPublishedEducations(),
+    getPublishedSkills(),
   ])
 
   const settings = settingsResult.success ? settingsResult.data : null
   const experiences = experiencesResult.success && experiencesResult.data ? experiencesResult.data : []
   const certificates = certificatesResult.success && certificatesResult.data ? certificatesResult.data : []
   const educations = educationsResult.success && educationsResult.data ? educationsResult.data : []
+  const skills = skillsResult.success && skillsResult.data ? skillsResult.data : []
 
   // Generate JSON-LD structured data
   const websiteSchema = generateWebsiteSchema({
@@ -61,6 +64,7 @@ export default async function HomePage() {
       />
       <main className="min-h-screen">
         <HeroSection settings={settings} />
+        <TechStackLoop skills={skills} />
         <FeaturedProjects />
         <EducationSection educations={educations} />
         <CertificatesSection certificates={certificates} />

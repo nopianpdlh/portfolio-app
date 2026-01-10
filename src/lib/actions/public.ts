@@ -71,6 +71,8 @@ export async function getPublishedSkills() {
       select: {
         id: true,
         name: true,
+        iconUrl: true,
+        iconUrlDark: true,
         level: true,
         category: true,
         order: true,
