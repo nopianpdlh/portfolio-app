@@ -57,6 +57,9 @@ model Project {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  @@index([isPublished, order])
+  @@index([userId])
 }
 
 // Skill model untuk skills matrix
@@ -73,6 +76,8 @@ model Skill {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  @@index([userId, order])
 }
 
 // Experience model untuk work experience/timeline
@@ -151,6 +156,8 @@ model BlogPost {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  @@index([isPublished, publishDate])
 }
 
 // Contact model untuk contact form submissions

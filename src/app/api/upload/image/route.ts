@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth-options'
 import { supabase } from '@/lib/supabase'
 import { generateUniqueFilename } from '@/lib/image-utils'
 
@@ -8,9 +10,19 @@ export const dynamic = 'force-dynamic'
 /**
  * POST /api/upload/image
  * Upload image to Supabase Storage
+ * Requires authentication
  */
 export async function POST(request: NextRequest) {
   try {
+    // Verify user is authenticated
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const formData = await request.formData()
     const file = formData.get('file') as File
     const folder = formData.get('folder') as string || 'projects'
@@ -87,9 +99,19 @@ export async function POST(request: NextRequest) {
 /**
  * DELETE /api/upload/image
  * Delete image from Supabase Storage
+ * Requires authentication
  */
 export async function DELETE(request: NextRequest) {
   try {
+    // Verify user is authenticated
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const path = searchParams.get('path')
 

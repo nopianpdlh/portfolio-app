@@ -17,8 +17,13 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Check if credentials match admin env vars
-        const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com"
-        const adminPassword = process.env.ADMIN_PASSWORD || "admin123"
+        const adminEmail = process.env.ADMIN_EMAIL
+        const adminPassword = process.env.ADMIN_PASSWORD
+        
+        if (!adminEmail || !adminPassword) {
+          console.error("ADMIN_EMAIL dan ADMIN_PASSWORD harus di-set di environment variables")
+          throw new Error("Konfigurasi admin tidak valid")
+        }
         
         const isAdminEnv =
           credentials.email === adminEmail &&

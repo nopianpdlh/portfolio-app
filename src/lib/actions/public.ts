@@ -1,5 +1,6 @@
 "use server"
 
+import { z } from "zod"
 import prisma from "@/lib/prisma"
 
 /**
@@ -308,6 +309,13 @@ export async function getPublishedEducations() {
 }
 
 // ===== Contact Form Submission =====
+const contactFormSchema = z.object({
+  name: z.string().min(2, "Nama minimal 2 karakter").max(100, "Nama maksimal 100 karakter"),
+  email: z.string().email("Format email tidak valid"),
+  subject: z.string().max(200, "Subject maksimal 200 karakter").optional(),
+  message: z.string().min(10, "Pesan minimal 10 karakter").max(5000, "Pesan maksimal 5000 karakter"),
+})
+
 export async function submitContactForm(data: {
   name: string
   email: string
@@ -315,17 +323,23 @@ export async function submitContactForm(data: {
   message: string
 }) {
   try {
+    // Validate input
+    const validated = contactFormSchema.parse(data)
+
     const contact = await prisma.contact.create({
       data: {
-        name: data.name,
-        email: data.email,
-        subject: data.subject || "Website Contact Form",
-        message: data.message,
+        name: validated.name,
+        email: validated.email,
+        subject: validated.subject || "Website Contact Form",
+        message: validated.message,
       },
     })
 
     return { success: true, data: contact }
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.issues[0].message }
+    }
     console.error("Error submitting contact form:", error)
     return { success: false, error: "Failed to submit contact form" }
   }
