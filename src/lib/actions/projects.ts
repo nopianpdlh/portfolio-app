@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import prisma from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth"
-import { projectSchema, createProjectSchema } from "@/lib/validations/project"
+import { projectSchema, createProjectSchema, updateProjectSchema } from "@/lib/validations/project"
 
 // Helper function to generate slug
 function generateSlug(title: string): string {
@@ -149,8 +149,11 @@ export async function createProject(data: any) {
 }
 
 // Update project
-export async function updateProject(id: string, data: any) {
+export async function updateProject(id: string, data: unknown) {
   await requireAdmin()
+
+  // Validate input data
+  const validatedData = updateProjectSchema.parse(data)
 
   // Check if project exists
   const existingProject = await prisma.project.findUnique({
@@ -163,8 +166,8 @@ export async function updateProject(id: string, data: any) {
 
   // If title changed, regenerate slug
   let slug = existingProject.slug
-  if (data.title && data.title !== existingProject.title) {
-    const baseSlug = generateSlug(data.title)
+  if (validatedData.title && validatedData.title !== existingProject.title) {
+    const baseSlug = generateSlug(validatedData.title)
     slug = baseSlug
     let counter = 1
 
@@ -182,8 +185,8 @@ export async function updateProject(id: string, data: any) {
   const project = await prisma.project.update({
     where: { id },
     data: {
-      ...data,
-      dateCompleted: data.dateCompleted ? new Date(data.dateCompleted) : null,
+      ...validatedData,
+      dateCompleted: validatedData.dateCompleted ? new Date(validatedData.dateCompleted) : null,
       slug,
     },
   })
