@@ -3,33 +3,18 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, ExternalLink, Github, Calendar, Code2, Lightbulb, Target, TrendingUp } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowLeft01Icon, LinkSquare01Icon, GithubIcon, Calendar03Icon, CodeIcon, Idea01Icon, Target01Icon, AnalyticsUpIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { fadeIn, slideUp, staggerContainer, staggerItem } from "@/lib/animations"
+import type { ProjectDetail } from "@/types/project"
 
-interface Project {
-  id: string
-  title: string
-  description: string
-  images: string[]
-  liveUrl: string | null
-  repoUrl: string | null
-  techStack: string[]
-  programmingLanguages: string[]
-  category: string | null
-  slug: string
-  challenges: string | null
-  solutions: string | null
-  metrics: string | null
-  dateCompleted: Date | null
-}
 
 interface ProjectDetailClientProps {
-  project: Project
+  project: ProjectDetail
 }
 
 export default function ProjectDetailClient({ project }: ProjectDetailClientProps) {
@@ -45,7 +30,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
         >
           <Button asChild variant="ghost" size="sm">
             <Link href="/projects">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <HugeiconsIcon icon={ArrowLeft01Icon} size={16} className="mr-2" />
               Back to Projects
             </Link>
           </Button>
@@ -71,7 +56,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
             {project.liveUrl && (
               <Button asChild>
                 <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="w-4 h-4 mr-2" />
+                  <HugeiconsIcon icon={LinkSquare01Icon} size={16} className="mr-2" />
                   Live Demo
                 </a>
               </Button>
@@ -79,7 +64,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
             {project.repoUrl && (
               <Button asChild variant="outline">
                 <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                  <Github className="w-4 h-4 mr-2" />
+                  <HugeiconsIcon icon={GithubIcon} size={16} className="mr-2" />
                   View Code
                 </a>
               </Button>
@@ -151,7 +136,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                   
                   {project.dateCompleted && (
                     <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
+                      <HugeiconsIcon icon={Calendar03Icon} size={16} />
                       <span>
                         Completed: {new Date(project.dateCompleted).toLocaleDateString("en-US", {
                           month: "long",
@@ -171,7 +156,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                 >
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-4">
-                      <Lightbulb className="w-5 h-5 text-primary" />
+                      <HugeiconsIcon icon={Idea01Icon} size={20} className="text-primary" />
                       <h2 className="text-2xl font-bold">Challenges</h2>
                     </div>
                     <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -183,7 +168,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
 
                   <div className="mt-6">
                     <div className="flex items-center gap-2 mb-4">
-                      <Target className="w-5 h-5 text-primary" />
+                      <HugeiconsIcon icon={Target01Icon} size={20} className="text-primary" />
                       <h2 className="text-2xl font-bold">Solutions</h2>
                     </div>
                     <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -200,7 +185,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                   transition={{ duration: 0.5 }}
                 >
                   <div className="flex items-center gap-2 mb-4">
-                    <TrendingUp className="w-5 h-5 text-primary" />
+                    <HugeiconsIcon icon={AnalyticsUpIcon} size={20} className="text-primary" />
                     <h2 className="text-2xl font-bold">Metrics & Results</h2>
                   </div>
                   <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -216,7 +201,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
             {/* Tech Stack */}
             <Card className="p-6">
               <div className="flex items-center gap-2 mb-4">
-                <Code2 className="w-5 h-5 text-primary" />
+                <HugeiconsIcon icon={CodeIcon} size={20} className="text-primary" />
                 <h3 className="font-bold">Tech Stack</h3>
               </div>
               <div className="space-y-4">
@@ -258,7 +243,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <HugeiconsIcon icon={LinkSquare01Icon} size={16} />
                     <span>Live Website</span>
                   </a>
                 )}
@@ -269,7 +254,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
                   >
-                    <Github className="w-4 h-4" />
+                    <HugeiconsIcon icon={GithubIcon} size={16} />
                     <span>Source Code</span>
                   </a>
                 )}

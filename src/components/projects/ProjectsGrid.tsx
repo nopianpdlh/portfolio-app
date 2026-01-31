@@ -3,26 +3,14 @@
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import ProjectCard from "./ProjectCard"
+import FeaturedProjectCard from "./FeaturedProjectCard"
 import ProjectFilters from "./ProjectFilters"
 import { staggerContainer, staggerItem } from "@/lib/animations"
+import type { ProjectListItem } from "@/types/project"
 
-interface Project {
-  id: string
-  title: string
-  description: string
-  images: string[]
-  liveUrl: string | null
-  repoUrl: string | null
-  techStack: string[]
-  programmingLanguages: string[]
-  category: string | null
-  isFeatured: boolean
-  slug: string
-  order: number
-}
 
 interface ProjectsGridProps {
-  initialProjects: Project[]
+  initialProjects: ProjectListItem[]
 }
 
 export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
@@ -68,6 +56,10 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
     })
   }, [initialProjects, selectedCategory, selectedTech, searchQuery])
 
+  // Separate featured and regular projects
+  const featuredProjects = filteredProjects.filter(p => p.isFeatured)
+  const regularProjects = filteredProjects.filter(p => !p.isFeatured)
+
   return (
     <div className="space-y-8">
       <ProjectFilters
@@ -95,13 +87,39 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
             initial="hidden"
             animate="visible"
             exit={{ opacity: 0 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="space-y-8"
           >
-            {filteredProjects.map((project) => (
-              <motion.div key={project.id} variants={staggerItem} layout>
-                <ProjectCard project={project} />
-              </motion.div>
-            ))}
+            {/* Featured Projects - Larger Cards */}
+            {featuredProjects.length > 0 && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {featuredProjects.map((project, index) => (
+                  <motion.div 
+                    key={project.id} 
+                    variants={staggerItem} 
+                    layout
+                    custom={index}
+                  >
+                    <FeaturedProjectCard project={project} />
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {/* Regular Projects - Standard Grid */}
+            {regularProjects.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {regularProjects.map((project, index) => (
+                  <motion.div 
+                    key={project.id} 
+                    variants={staggerItem} 
+                    layout
+                    custom={featuredProjects.length + index}
+                  >
+                    <ProjectCard project={project} />
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </motion.div>
         ) : (
           <motion.div
